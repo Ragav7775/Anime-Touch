@@ -87,6 +87,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/public', 'index.html'));
 });
 
+// Endpoint to check if the server is running
+app.get('/api/status', (req, res) => {
+  res.json({ status: 'Server is running' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
