@@ -12,7 +12,7 @@ const usersPath = path.join(__dirname, './data/users.json');
 
 app.use(bodyParser.json());
 app.use(cors({
-  origin: 'https://animetouch.vercel.app',  // Your client URL
+  origin: 'https://animetouch.vercel.app/',  // Your client URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
