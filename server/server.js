@@ -11,8 +11,11 @@ const PORT = process.env.PORT || 5500;
 const usersPath = path.join(__dirname, './data/users.json');
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://animetouch.vercel.app'  // Replace with your actual client domain
+}));
 app.use(express.static(path.join(__dirname, '../client/public')));
+
 
 // Function to read users from JSON file
 const readUsers = () => {
