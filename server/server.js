@@ -12,7 +12,7 @@ const usersPath = path.join(__dirname, './data/users.json');
 
 app.use(bodyParser.json());
 app.use(cors({
-  origin: 'https://animetouch.vercel.app/',  // Your client URL
+  origin: 'https://animetouch.vercel.app',  // Your client URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -39,7 +39,7 @@ const writeUsers = (users) => {
   }
 };
 
-app.post('https://animetouch.vercel.app/api/signup', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
   const { username, email, password } = req.body;
   const users = readUsers();
 
@@ -59,7 +59,7 @@ app.post('https://animetouch.vercel.app/api/signup', async (req, res) => {
   res.json({ success: true, message: 'Signup successful' });
 });
 
-app.post('https://animetouch.vercel.app/api/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   const users = readUsers();
 
