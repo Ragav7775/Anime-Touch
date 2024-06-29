@@ -84,7 +84,6 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  <div>server is running successfully</div>
 });
 
 console.log("server is running fine");
