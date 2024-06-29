@@ -39,7 +39,7 @@ const writeUsers = (users) => {
   }
 };
 
-app.post('/api/signup', async (req, res) => {
+app.post('https://animetouch.vercel.app/api/signup', async (req, res) => {
   const { username, email, password } = req.body;
   const users = readUsers();
 
@@ -59,7 +59,7 @@ app.post('/api/signup', async (req, res) => {
   res.json({ success: true, message: 'Signup successful' });
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('https://animetouch.vercel.app/api/login', async (req, res) => {
   const { username, password } = req.body;
   const users = readUsers();
 
