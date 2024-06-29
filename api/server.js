@@ -12,7 +12,7 @@ const usersPath = path.join(__dirname, './data/users.json');
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Function to read users from JSON file
 const readUsers = () => {
@@ -79,7 +79,7 @@ app.post('/api/login', async (req, res) => {
 
 // Catch-all handler to serve the frontend's index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 app.listen(PORT, () => {
