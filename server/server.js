@@ -42,13 +42,13 @@ const writeUsers = (users) => {
 app.post('/api/signup', async (req, res) => {
   const { username, email, password } = req.body;
   const users = readUsers();
+  console.log("data received successfully");
 
   // Check if username already exists
   if (users.find(user => user.username === username)) {
     return res.json({ success: false, message: 'Username already taken' });
-  }
-
-  // Hash the password
+  } else {
+    // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Add new user to users array
@@ -57,11 +57,14 @@ app.post('/api/signup', async (req, res) => {
 
   // Send success response
   res.json({ success: true, message: 'Signup successful' });
+  console.log("data pushed successfully");
+  }
 });
 
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   const users = readUsers();
+  console.log("data received successfully");
 
   // Find user by username
   const user = users.find(user => user.username === username);
@@ -73,7 +76,7 @@ app.post('/api/login', async (req, res) => {
       return res.json({ success: true });
     } else {
       // Invalid password
-      return res.json({ success: false, message: 'Invalid username or password' });
+      return res.json({ success: false, message: 'Invalid password' });
     }
   } else {
     // Invalid username
