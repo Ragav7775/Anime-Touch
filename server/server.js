@@ -52,10 +52,10 @@ app.post('/api/signup', async (req, res) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    res.json({ success: true, message: 'Signup successful' });
+    res.json({ success: true, message: 'Signup Successful' });
   } catch (error) {
     console.error('Error in signup:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
 
@@ -69,22 +69,22 @@ app.post('/api/login', async (req, res) => {
       if (match) {
         return res.json({ success: true });
       } else {
-        return res.json({ success: false, message: 'Invalid username or password' });
+        return res.json({ success: false, message: 'Password Invalid' });
       }
     } else {
       return res.json({ success: false, message: 'Invalid username or password' });
     }
   } catch (error) {
     console.error('Error in login:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
 
 // Endpoint to check if the server is running
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'Server is running' });
+  res.json({ status: 'Server is Running' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is Running on Port ${PORT}`);
 });
