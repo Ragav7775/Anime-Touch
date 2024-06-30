@@ -69,6 +69,7 @@ app.post('/api/login', async (req, res) => {
   // Find user by username
   const user = users.find(user => user.username === username);
   if (user) {
+    console.log("data verifying successfully");
     // Compare the hashed password
     const match = await bcrypt.compare(password, user.password);
     if (match) {
