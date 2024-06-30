@@ -1,14 +1,28 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const cors = require('cors');
-const path = require('path');
 const bcrypt = require('bcrypt');
-
+const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 5500;
-const usersPath = path.join(__dirname, './data/users.json');
+
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+  console.log('Connected to MongoDB Atlas');
+}).catch((error) => {
+  console.error('Error connecting to MongoDB Atlas:', error);
+});
+
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+});
+
+const User = mongoose.model('User', userSchema);
 
 app.use(bodyParser.json());
 app.use(cors({
@@ -18,77 +32,45 @@ app.use(cors({
   credentials: true
 }));
 
-
-// Function to read users from JSON file
-const readUsers = () => {
-  try {
-    const data = fs.readFileSync(usersPath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading users:', error);
-    return [];
-  }
-};
-
-// Function to write users to JSON file
-const writeUsers = (users) => {
-  try {
-    fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
-  } catch (error) {
-    console.error('Error writing users:', error);
-  }
-};
-
 app.post('/api/signup', async (req, res) => {
   const { username, email, password } = req.body;
-  const users = readUsers();
-  console.log("data received successfully");
 
-  // Check if username already exists
-  if (users.find(user => user.username === username)) {
-    return res.json({ success: false, message: 'Username already taken' });
-  } else {
-    // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Add new user to users array
-  users.push({ username, email, password: hashedPassword });
-  writeUsers(users);
-
-  // Send success response
-  res.json({ success: true, message: 'Signup successful' });
-  console.log("data pushed successfully");
+  try {
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.json({ success: false, message: 'Username already taken' });
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({ username, email, password: hashedPassword });
+      await newUser.save();
+   
+      res.json({ success: true, message: 'Signup successful' });
+    }
+  } catch (error) {
+    console.error('Error in signup:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
-  const users = readUsers();
-  console.log("data received successfully");
 
-  // Find user by username
-  const user = users.find(user => user.username === username);
-  if (user) {
-    console.log("data verifying successfully");
-    // Compare the hashed password
-    const match = await bcrypt.compare(password, user.password);
-    if (match) {
-      // Successful login
-      return res.json({ success: true });
+  try {
+    const user = await User.findOne({ username });
+    if (user) {
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        return res.json({ success: true });
+      } else {
+        return res.json({ success: false, message: 'Password Invalid' });
+      }
     } else {
-      // Invalid password
-      return res.json({ success: false, message: 'Invalid password' });
+      return res.json({ success: false, message: 'Invalid Username or Password' });
     }
-  } else {
-    // Invalid username
-    return res.json({ success: false, message: 'Invalid username or password' });
+  } catch (error) {
+    console.error('Error in login:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error! Please try again later' });
   }
-});
-
-
-// Catch-all handler to serve the frontend's index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/public', 'index.html'));
 });
 
 // Endpoint to check if the server is running
@@ -99,5 +81,3 @@ app.get('/api/status', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-console.log("server is running fine");
